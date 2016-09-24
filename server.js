@@ -43,7 +43,7 @@ app.get("/eallary/eateries", function(req, res) {
 	});
 });
 
-appp.post("/eallary/eateries", function(req, res) {
+app.post("/eallary/eateries", function(req, res) {
 });
 
 
