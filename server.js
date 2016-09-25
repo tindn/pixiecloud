@@ -36,14 +36,9 @@ function handleError(res, reason, message, code) {
 app.get("/eallary/eateries", function(req, res) {
 	db.collection(EATERIES_COLLECTION).find({}).toArray(function(err, docs) {
 		if (err) {
-			handleError(res, err.message, "Failed to get contacts.");
+			handleError(res, err.message, "Failed to get eateries.");
 		} else {
 			res.status(200).json(docs);
 		}
 	});
 });
-
-app.post("/eallary/eateries", function(req, res) {
-});
-
-
