@@ -20,7 +20,7 @@ Repository.prototype.getAllExercises = function getAllExercises() {
 Repository.prototype.createExercise = function createExercise(exercise) {
     var collection = this.db.collection(this.EXERCISE_COLLECTION);
     return new Promise(function createExercisePromise(resolve, reject) {
-        db.insertOne(exercise, function(error, doc) {
+        collection.insertOne(exercise, function(error, doc) {
             if (error) {
                 reject(error);
             }
