@@ -1,11 +1,11 @@
 var mongodb = require('mongodb');
 
-var repository = function(db) {
+function Repository(db) {
     this.db = db;
     this.EXERCISE_COLLECTION = 'livestrong_exercises';
-};
+}
 
-repository.prototype.getAllExercises = function(errororHandler, success) {
+Repository.prototype.getAllExercises = function(errororHandler, success) {
     this.db.collection(this.EXERCISE_COLLECTION).find({}).toArray(function(error, docs) {
         if (error) {
             errororHandler(error);
@@ -15,7 +15,7 @@ repository.prototype.getAllExercises = function(errororHandler, success) {
     });
 };
 
-repository.prototype.createExercise = function(exercise, errororHandler, success) {
+Repository.prototype.createExercise = function(exercise, errororHandler, success) {
     this.db
         .collection(this.EXERCISE_COLLECTION)
         .find({ name: exercise.name })
@@ -39,13 +39,13 @@ repository.prototype.createExercise = function(exercise, errororHandler, success
         });
 };
 
-repository.prototype.validateExercise = function(exercise, invalid) {
+Repository.prototype.validateExercise = function(exercise, invalid) {
     if (!exercise.name) {
         invalid('Exercise name is missing');
     }
 };
 
-repository.prototype.deleteExercise = function(id, errorHandler, success) {
+Repository.prototype.deleteExercise = function(id, errorHandler, success) {
     this.db.collection(this.EXERCISE_COLLECTION).deleteOne({
         _id: new mongodb.ObjectID(id)
     }, function(error, result) {
@@ -57,7 +57,7 @@ repository.prototype.deleteExercise = function(id, errorHandler, success) {
     });
 };
 
-repository.prototype.updateExercise = function(id, exercise, errorHandler, success) {
+Repository.prototype.updateExercise = function(id, exercise, errorHandler, success) {
     delete exercise._id;
     this.db.collection(this.EXERCISE_COLLECTION).updateOne({
         _id: new mongodb.ObjectID(id)
@@ -70,4 +70,4 @@ repository.prototype.updateExercise = function(id, exercise, errorHandler, succe
     });
 };
 
-module.exports.repository = repository;
+module.exports = Repository;

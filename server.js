@@ -4,12 +4,17 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 var mongodb = require('mongodb');
-var lsRepository = require('./livestrong/repository');
+var LsRepository = require('./livestrong/repository');
 var ObjectID = mongodb.ObjectID;
 
 var app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
+// app.use(function(req, res, next) {
+//     res.header('Access-Control-Allow-Origin', '*');
+//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//     next();
+// });
 
 var db;
 var livestrongRepository;
@@ -28,7 +33,7 @@ mongodb.MongoClient.connect(
             var port = server.address().port;
             console.log('App now running on port', port);
         });
-        livestrongRepository = new lsRepository.repository(db);
+        livestrongRepository = new LsRepository(db);
     }
 );
 
