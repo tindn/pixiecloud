@@ -5,68 +5,81 @@ function Repository(db) {
     this.EXERCISE_COLLECTION = 'livestrong_exercises';
 }
 
-Repository.prototype.getAllExercises = function(errororHandler, success) {
-    this.db.collection(this.EXERCISE_COLLECTION).find({}).toArray(function(error, docs) {
-        if (error) {
-            errororHandler(error);
-        } else {
-            success(docs);
-        }
+Repository.prototype.getAllExercises = function getAllExercises() {
+    var query = this.db.collection(this.EXERCISE_COLLECTION).find({});
+    return new Promise(function getAllExercisesPromise(resolve, reject) {
+        query.toArray(function(error, docs) {
+            if (error) {
+                reject(error);
+            }
+            resolve(docs);
+        });
     });
 };
 
-Repository.prototype.createExercise = function(exercise, errororHandler, success) {
-    this.db
-        .collection(this.EXERCISE_COLLECTION)
-        .find({ name: exercise.name })
-        .toArray(function(error, docs) {
+Repository.prototype.createExercise = function createExercise(exercise) {
+    var collection = this.db.collection(this.EXERCISE_COLLECTION);
+    return new Promise(function createExercisePromise(resolve, reject) {
+        db.insertOne(exercise, function(error, doc) {
             if (error) {
-                errororHandler(error);
+                reject(error);
             }
-            if (docs.length == 0) {
-                this.db
-                    .collection(this.EXERCISE_COLLECTION)
-                    .insertOne(exercise, function(error, doc) {
-                        if (error) {
-                            errororHandler(error);
-                        } else {
-                            success(doc.ops[0]);
-                        }
-                    });
-            } else {
-                success(docs[0]);
-            }
+            resolve(doc.ops[0]);
         });
+    });
 };
 
-Repository.prototype.validateExercise = function(exercise, invalid) {
+Repository.prototype.getExercisesOfName = function getExercisesOfName(name) {
+    var existingExercises = this.db.collection(this.EXERCISE_COLLECTION).find({ name: name });
+    return new Promise(function getExercisesOfNamePromise(resolve, reject) {
+        existingExercises.toArray(function(error, docs) {
+            if (error) {
+                reject(error);
+            }
+            resolve(docs);
+        });
+    });
+};
+Repository.prototype.validateExercise = function(exercise) {
     if (!exercise.name) {
-        invalid('Exercise name is missing');
+        return 'Exercise name is missing';
     }
+    return null;
 };
 
 Repository.prototype.deleteExercise = function(id, errorHandler, success) {
-    this.db.collection(this.EXERCISE_COLLECTION).deleteOne({
-        _id: new mongodb.ObjectID(id)
-    }, function(error, result) {
-        if (error) {
-            errorHandler(error);
-        } else {
-            success(result);
-        }
+    var collection = this.db.collection(this.EXERCISE_COLLECTION);
+    return new Promise((resolve, reject) => {
+        collection.deleteOne(
+            {
+                _id: new mongodb.ObjectID(id)
+            },
+            function(error, result) {
+                if (error) {
+                    reject(error);
+                }
+                resolve(result);
+            }
+        );
     });
 };
 
 Repository.prototype.updateExercise = function(id, exercise, errorHandler, success) {
     delete exercise._id;
-    this.db.collection(this.EXERCISE_COLLECTION).updateOne({
-        _id: new mongodb.ObjectID(id)
-    }, exercise, function(error, doc) {
-        if (error) {
-            errorHandler(error);
-        } else {
-            success(doc);
-        }
+    var collection = this.db.collection(this.EXERCISE_COLLECTION);
+    return new Promise((resolve, reject) => {
+        collection.updateOne(
+            {
+                _id: new mongodb.ObjectID(id)
+            },
+            exercise,
+            function(error, doc) {
+                if (error) {
+                    reject(error);
+                }
+                resolve(doc);
+            }
+        );
     });
 };
 
